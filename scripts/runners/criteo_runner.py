@@ -5,9 +5,9 @@ import torch.utils.data.datapipes as dp
 
 from torchrec.datasets.criteo import criteo_terabyte
 
-WORKER_COUNT=94
+WORKER_COUNT = 94
 BATCH_SIZE = 32
-MAX_BATCH_COUNT = 1000
+EXPERIMENT_TIME = 120  # should be in seconds
 FILES = ['/home/dan/projects/db-preproc/data/train.tsv'] * 13
 
 # Set up the input pipeline
@@ -19,12 +19,20 @@ dataset = DataLoader(df, num_workers=WORKER_COUNT)
 batch_iterator = iter(dataset)
 
 s = time.time()
-for batch_idx, batch in enumerate(batch_iterator):
-  if batch_idx >= MAX_BATCH_COUNT:
-    break
+batch_idx = 0
+while time.time() - s >= EXPERIMENT_TIME:
+  batch = next(batch_iterator)
   if batch_idx % 1000 == 0:
-    print(f"Created batch #{batch_idx}")
+    print(f"At batch #{batch_idx}")
+  batch_idx += 1
 s = time.time() - s
 
-print(f"Completed the experiment; {MAX_BATCH_COUNT * BATCH_SIZE / s} "
-      f"[instances/s] = ({MAX_BATCH_COUNT} * {BATCH_SIZE}) / {s}")
+# for batch_idx, batch in enumerate(batch_iterator):
+#   if time.time() - s >= EXPERIMENT_TIME:
+#     break
+#   if batch_idx % 1000 == 0:
+#     print(f"At batch #{batch_idx}")
+# s = time.time() - s
+
+print(f"Completed the experiment; {batch_idx * BATCH_SIZE / s} "
+      f"[instances/s] = ({batch_idx} * {BATCH_SIZE}) / {s}")
