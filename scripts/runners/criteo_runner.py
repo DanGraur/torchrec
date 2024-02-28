@@ -18,9 +18,9 @@ dataset = DataLoader(df, num_workers=WORKER_COUNT)
 
 batch_iterator = iter(dataset)
 
-s = time.time()
 batch_idx = 0
-while time.time() - s >= EXPERIMENT_TIME:
+s = time.time()
+while time.time() - s <= EXPERIMENT_TIME:
   batch = next(batch_iterator)
   if batch_idx % 1000 == 0:
     print(f"At batch #{batch_idx}")
